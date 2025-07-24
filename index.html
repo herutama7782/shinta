@@ -3,7 +3,7 @@
 <head>
     <Meta charset="UTF-8">
     <Meta Name="viewport" Content="width=device-width, initial-scale=1.0">
-    <Title>AI Prompt Generator (Modern &amp; Menarik)</Title>
+    <Title>AI Prompt Generator (Modern & Menarik)</Title>
     <!-- Tailwind CSS CDN for utility-first styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <Style>
@@ -327,16 +327,16 @@
 
                 // Make the asynchronous fetch call to the Gemini API
                 const response = await fetch(APIurl, {
-                    method: 'POST', // HTTP method for sending data
-                    headers: { 'Content-Type': 'application/json' }, // Specify content type as JSON
-                    body: JSON.stringify(payload) // Convert JavaScript object to JSON string for the request body
+                    method: 'post', // HTTP method for sending data
+                    Headers: { 'Content-Type': 'application/json' }, // Specify content type as JSON
+                    Body: JSON.stringify(payload) // Convert JavaScript object to JSON string for the request body
                 });
 
-                const result = await response.json(); // Parse the JSON response from the API
+                const result = await response.JSON(); // Parse the JSON response from the API
 
                 // Check if the API response contains valid content
                 if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].Content && result.candidates[0].content.parts &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const text = result.candidates[0].content.parts[0].text; // Extract the generated text
                     currentPrompt = "Buatkan gambar, " + text; // Add the specified prefix to the prompt
