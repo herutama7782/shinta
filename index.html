@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt Generator (Modern & Menarik)</title>
+    <!-- Tailwind CSS CDN for utility-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Import Inter font for a modern and clean typography */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* Base body styles for a dark, immersive background and Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            background-color: #12121e; /* Very dark, almost black background */
+            color: #e0e0e0; /* Default light text color for contrast */
+            transition: background-color 0.5s ease; /* Smooth background transition */
+        }
+
+        /* Custom spinner style for loading indicators */
+        .spinner {
+            border: 4px solid rgba(135, 206, 250, 0.3); /* Light sky blue, transparent border for base */
+            border-top: 4px solid #87cefa; /* Bright sky blue for the animating part */
+            border-radius: 50%; /* Make it circular */
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite; /* Spin animation */
+        }
+        /* Keyframe animation for the spinner */
+        @keyframes spin {
+            0% { transform: rotate(0deg); } /* Start at 0 degrees */
+            100% { transform: rotate(360deg); } /* Rotate a full circle */
+        }
+
+        /* Modern neon glow effect for elements, giving a techy vibe */
+        .modern-neon-glow-blue {
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.6), /* Inner glow */
+                        0 0 20px rgba(0, 240, 255, 0.4), /* Mid glow */
+                        0 0 30px rgba(0, 240, 255, 0.2); /* Outer glow */
+        }
+        .modern-neon-glow-purple {
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.6),
+                        0 0 20px rgba(255, 0, 255, 0.4),
+                        0 0 30px rgba(255, 0, 255, 0.2);
+        }
+
+        /* Neon text style for headings and important links */
+        .neon-text-light-blue {
+            color: #00f0ff; /* Bright cyan color */
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.8), /* Inner text glow */
+                         0 0 15px rgba(0, 240, 255, 0.6); /* Outer text glow */
+        }
+
+        /* Modern button styles with gradients and hover effects for interactivity */
+        .button-gradient-green {
+            background-image: linear-gradient(to right, #22c55e, #16a34a); /* Green gradient */
+            transition: all 0.3s ease; /* Smooth transition for hover effects */
+        }
+        .button-gradient-green:hover {
+            background-image: linear-gradient(to right, #16a34a, #22c55e); /* Reverse gradient on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4); /* Shadow on hover */
+        }
+        .button-gradient-purple {
+            background-image: linear-gradient(to right, #9333ea, #7e22ce); /* Purple gradient */
+            transition: all 0.3s ease;
+        }
+        .button-gradient-purple:hover {
+            background-image: linear-gradient(to right, #7e22ce, #9333ea);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(147, 51, 234, 0.4);
+        }
+
+        /* Styles for textarea and file input for consistent dark theme appearance */
+        textarea, input[type="file"] {
+            background-color: #1f1f32; /* Slightly lighter dark background for inputs */
+            border-color: #4a4a6b; /* Grey-blue border */
+            color: #e0e0e0; /* Light text inside inputs */
+            transition: all 0.3s ease; /* Smooth transitions for focus effects */
+        }
+        textarea:focus, input[type="file"]:focus {
+            outline: none; /* Remove default outline */
+            border-color: #87cefa; /* Sky blue border on focus */
+            box-shadow: 0 0 0 3px rgba(135, 206, 250, 0.5); /* Ring glow on focus */
+        }
+        /* Styling for the file input's "Choose File" button */
+        input[type="file"]::file-selector-button {
+            background-image: linear-gradient(to right, #00f0ff, #00bfff); /* Blue neon gradient */
+            color: #12121e; /* Dark text on button */
+            border: none;
+            transition: all 0.3s ease;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background-image: linear-gradient(to right, #00bfff, #00f0ff); /* Reverse gradient on hover */
+            transform: translateY(-1px); /* Slight lift */
+        }
+    </style>
+</head>
+<body>
+    <!-- Main container for the application, styled with dark background, rounded corners, and a blue neon glow -->
+    <div class="bg-gray-800 p-6 rounded-xl shadow-2xl w-full max-w-4xl mx-auto mb-6 sm:p-8 md:p-10 lg:p-12 border border-blue-700/50 modern-neon-glow-blue">
+        <!-- Application Title -->
+        <h1 class="text-3xl font-bold text-center mb-6 sm:text-4xl neon-text-light-blue">
+            Aplikasi Generator Prompt Gambar AI
+        </h1>
+        <!-- Application Description -->
+        <p class="text-center text-gray-400 mb-8 text-sm sm:text-base">
+            Unggah gambar referensi Anda, lalu gunakan tombol "Generate Prompt dari Gambar" untuk mendapatkan deskripsi gambar. Anda kemudian dapat menyalin prompt tersebut untuk digunakan di tempat lain, seperti Gemini - ChatGPT.
+        </p>
+
+        <!-- Online Users Display -->
+        <div class="text-center text-gray-400 mb-8 text-sm sm:text-base">
+            Pengguna Online: <span id="online-users-count" class="font-bold neon-text-light-blue">0</span>
+        </div>
+
+        <!-- Image Upload Section -->
+        <div class="mb-8 p-6 border border-gray-700 rounded-lg bg-gray-900 shadow-inner">
+            <label for="image-upload" class="block text-lg font-medium text-gray-300 mb-3 sm:text-xl">
+                1. Unggah Gambar Referensi Anda.
+            </label>
+            <input
+                type="file"
+                id="image-upload"
+                accept="image/png, image/jpeg, image/webp"
+                class="block w-full text-sm text-gray-400
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-600 file:text-white
+                hover:file:bg-blue-700 cursor-pointer"
+            />
+            <!-- Container for displaying the uploaded image -->
+            <div id="uploaded-image-container" class="mt-6 flex justify-center hidden">
+                <img
+                    id="uploaded-image"
+                    alt="Gambar yang Diunggah"
+                    class="max-w-full h-auto max-h-72 rounded-lg shadow-lg border border-gray-600 object-contain"
+                />
+            </div>
+        </div>
+
+        <!-- Prompt Generation and Display Section -->
+        <div class="mb-8 p-6 border border-gray-700 rounded-lg bg-gray-900 shadow-inner">
+            <label for="prompt-textarea" class="block text-lg font-medium text-gray-300 mb-3 sm:text-xl">
+                2. Prompt Gambar:
+            </label>
+            <textarea
+                id="prompt-textarea"
+                class="w-full p-4 border rounded-lg shadow-sm focus:ring-4 text-gray-200 h-48 resize-y"
+                placeholder="Klik Generate prompt - Anda dapat mengedit hasil prompt sesuai kebutuhan..."
+            ></textarea>
+            <!-- Button to trigger prompt generation -->
+            <button
+                id="generate-prompt-button"
+                class="mt-6 w-full text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-offset-2 mb-4 button-gradient-green"
+            >
+                <span id="generate-prompt-text">Generate Prompt dari Gambar</span>
+                <div id="generate-prompt-spinner" class="spinner mx-auto hidden"></div>
+            </button>
+            <!-- Button to copy the generated prompt -->
+            <button
+                id="copy-prompt-button"
+                class="w-full text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-offset-2 mt-4 button-gradient-purple hidden"
+            >
+                Salin Prompt
+            </button>
+        </div>
+
+        <!-- Footer Section with a link -->
+        <footer class="text-center py-4 mt-6 rounded-lg bg-gray-900 shadow-inner border border-gray-700/50">
+            <p class="text-white text-sm">
+                Kunjungi kami di
+                <a href="https://lynk.id/prompt_academy" target="_blank"
+                   class="font-medium neon-text-light-blue hover:underline">
+                    lynk.id @prompt_academy
+                </a>
+            </p>
+        </footer>
+
+        <!-- Error Message Display Area -->
+        <div id="error-message" class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-xl relative mb-6 hidden mt-6" role="alert">
+            <strong class="font-bold">Error:</strong>
+            <span id="error-text" class="block sm:inline ml-2"></span>
+        </div>
+    </div>
+
+    <!-- Custom Alert Modal (instead of native alert/confirm) -->
+    <div id="custom-alert-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-900 p-6 rounded-xl shadow-2xl max-w-sm w-full mx-auto text-center border border-blue-700/50 modern-neon-glow-blue">
+            <p id="custom-alert-message" class="text-lg font-medium mb-4 neon-text-light-blue"></p>
+            <button
+                id="custom-alert-ok-button"
+                class="text-white font-semibold py-2 px-5 rounded-full shadow transition-all duration-200 button-gradient-green"
+            >
+                OK
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Get references to DOM elements for manipulation
+        const uploadedImageInput = document.getElementById('image-upload');
+        const uploadedImageContainer = document.getElementById('uploaded-image-container');
+        const uploadedImageDisplay = document.getElementById('uploaded-image');
+        const promptTextarea = document.getElementById('prompt-textarea');
+        const generatePromptButton = document.getElementById('generate-prompt-button');
+        const generatePromptText = document.getElementById('generate-prompt-text');
+        const generatePromptSpinner = document.getElementById('generate-prompt-spinner');
+        const copyPromptButton = document.getElementById('copy-prompt-button');
+        const errorMessageDiv = document.getElementById('error-message');
+        const errorTextSpan = document.getElementById('error-text');
+        const customAlertModal = document.getElementById('custom-alert-modal');
+        const customAlertMessage = document.getElementById('custom-alert-message');
+        const customAlertOkButton = document.getElementById('custom-alert-ok-button');
+        const onlineUsersCountSpan = document.getElementById('online-users-count'); // New: Element to display online user count
+
+        // State variables to store image data and the current generated prompt
+        let uploadedImageBase64 = null; // Stores the base64 encoded image data
+        let uploadedImageMimeType = null; // Stores the MIME type of the uploaded image (e.g., "image/png")
+        let currentPrompt = ''; // Stores the latest generated or manually entered prompt
+
+        // Firebase variables
+        let app;
+        let auth;
+        let db;
+        let userId = null; // Will store the authenticated user ID
+
+        // Initialize Firebase
+        // __firebase_config and __app_id are provided by the Canvas environment.
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            // Listen for authentication state changes
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    // User is signed in.
+                    userId = user.uid;
+                    console.log("Firebase user ID:", userId);
+
+                    // Set user presence in Firestore
+                    // Store user presence in a public collection
+                    const userRef = doc(db, `artifacts/${appId}/public/data/onlineUsers`, userId);
+                    
+                    // Mark user as online when they connect
+                    await setDoc(userRef, { lastSeen: Date.now(), online: true, userId: userId, displayName: `Pengguna ${userId.substring(0, 4)}` }, { merge: true });
+
+                    // Setup onDisconnect for reliable presence (requires Firebase Realtime Database for true onDisconnect, but can simulate with Firestore timestamps)
+                    // For a simple demo in Firestore, we'll rely on the 'beforeunload' event and regularly updating 'lastSeen'
+                    // In a production app, a server-side solution or a more robust client-side presence system (using Realtime Database's .info/connected) would be more accurate.
+
+                    // Listen for real-time updates to the online users count
+                    const onlineUsersCollectionRef = collection(db, `artifacts/${appId}/public/data/onlineUsers`);
+                    onSnapshot(onlineUsersCollectionRef, (snapshot) => {
+                        // Filter for users who are explicitly marked as online
+                        const onlineUsers = snapshot.docs.filter(doc => doc.data().online === true); 
+                        onlineUsersCountSpan.textContent = onlineUsers.length;
+                    });
+
+                } else {
+                    // User is signed out, or not authenticated yet. Sign in anonymously.
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined') {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Error signing in anonymously:", error);
+                        displayError("Gagal mengautentikasi pengguna untuk melacak status online.");
+                    }
+                }
+            });
+        } else {
+            console.warn("Firebase configuration not found. Online user tracking will not work.");
+        }
+
+
+        // Function to show a custom alert message using the modal
+        const showAlert = (message) => {
+            customAlertMessage.textContent = message; // Set the message text
+            customAlertModal.classList.remove('hidden'); // Display the modal
+        };
+
+        // Event listener for the custom alert's OK button to hide the modal
+        customAlertOkButton.onclick = () => {
+            customAlertModal.classList.add('hidden'); // Hide the modal
+        };
+
+        // Function to display an error message in the dedicated error section
+        const displayError = (message) => {
+            errorTextSpan.textContent = message; // Set the error text
+            errorMessageDiv.classList.remove('hidden'); // Show the error div
+        };
+
+        // Function to hide the error message
+        const hideError = () => {
+            errorMessageDiv.classList.add('hidden'); // Hide the error div
+            errorTextSpan.textContent = ''; // Clear any previous error text
+        };
+
+        // Event listener for image file input changes
+        uploadedImageInput.onchange = (event) => {
+            const file = event.target.files[0]; // Get the selected file
+            if (file) {
+                const reader = new FileReader(); // Create a FileReader object
+                reader.onloadend = () => {
+                    // When the file is loaded, extract base64 data and mime type
+                    // The result includes "data:image/png;base64," prefix, we need to split it
+                    uploadedImageBase64 = reader.result.split(',')[1]; // Get only the base64 part
+                    uploadedImageMimeType = file.type; // Get the original file's MIME type
+                    uploadedImageDisplay.src = reader.result; // Set the full data URL for displaying the image
+                    uploadedImageContainer.classList.remove('hidden'); // Make the image container visible
+                    promptTextarea.value = ''; // Clear any previous prompt in the textarea
+                    currentPrompt = ''; // Reset the stored prompt
+                    hideError(); // Hide any existing error messages
+                    copyPromptButton.classList.add('hidden'); // Hide the copy button until a new prompt is generated
+                };
+                reader.readAsDataURL(file); // Read the file content as a Data URL (base64 encoded string)
+            } else {
+                // If no file is selected, reset all image-related states
+                uploadedImageBase64 = null;
+                uploadedImageMimeType = null;
+                uploadedImageDisplay.src = '';
+                uploadedImageContainer.classList.add('hidden');
+                promptTextarea.value = '';
+                currentPrompt = '';
+                hideError();
+                copyPromptButton.classList.add('hidden');
+            }
+        };
+
+        // Event listener for changes in the prompt textarea (if user manually types or edits)
+        promptTextarea.oninput = (event) => {
+            currentPrompt = event.target.value; // Update the currentPrompt state with the textarea's value
+            // Show or hide the copy button based on whether the textarea has content
+            if (currentPrompt.trim()) {
+                copyPromptButton.classList.remove('hidden');
+            } else {
+                copyPromptButton.classList.add('hidden');
+            }
+        };
+
+        // Event listener for the "Generate Prompt" button click
+        generatePromptButton.onclick = async () => {
+            // Check if an image has been uploaded
+            if (!uploadedImageBase64 || !uploadedImageMimeType) {
+                showAlert('Harap unggah gambar terlebih dahulu untuk dianalisis.');
+                return; // Stop execution if no image is uploaded
+            }
+
+            // Show loading state: Hide text, show spinner, disable button
+            generatePromptText.classList.add('hidden');
+            generatePromptSpinner.classList.remove('hidden');
+            generatePromptButton.disabled = true;
+            hideError(); // Clear any previous errors before starting generation
+
+            try {
+                // Prompt instruction for the AI model to describe the image.
+                // It explicitly requests the description in Indonesian and no conversational text.
+                const analysisPrompt = "Jelaskan gambar ini secara detail, berfokus pada elemen, warna, gaya, dan komposisi. Deskripsi harus cukup detail untuk menghasilkan gambar serupa menggunakan model teks-ke-gambar AI. Berikan deskripsi hanya dalam bahasa Indonesia, tanpa teks percakapan atau penjelasan lainnya.";
+                                
+                // Construct the payload for the Gemini API (multimodal input)
+                const payload = {
+                    contents: [
+                        {
+                            role: "user", // The role of the sender (user)
+                            parts: [
+                                { text: analysisPrompt }, // The text part of the prompt
+                                {
+                                    inlineData: { // The image data part
+                                        mimeType: uploadedImageMimeType, // Dynamically set MIME type
+                                        data: uploadedImageBase64 // Base64 encoded image data
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                };
+
+                // API key. It's best practice to leave this empty as the Canvas runtime provides it.
+                const apiKey = "AIzaSyDOhsUEyVD2h6MSOSIzpevKAHcTw9KqHi0"; 
+
+                // Gemini API endpoint for generating content from Gemini 2.5 Flash Preview model for image understanding
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                // Make the asynchronous fetch call to the Gemini API
+                const response = await fetch(apiUrl, {
+                    method: 'POST', // HTTP method for sending data
+                    headers: { 'Content-Type': 'application/json' }, // Specify content type as JSON
+                    body: JSON.stringify(payload) // Convert JavaScript object to JSON string for the request body
+                });
+
+                const result = await response.json(); // Parse the JSON response from the API
+
+                // Check if the API response contains valid content
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].Content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text; // Extract the generated text
+                    currentPrompt = "Buatkan gambar, " + text; // Add the specified prefix to the prompt
+                    promptTextarea.value = currentPrompt; // Display the generated prompt in the textarea
+                    copyPromptButton.classList.remove('hidden'); // Show the copy button
+                } else {
+                    // Handle cases where the API response structure is unexpected or empty
+                    displayError('Gagal menganalisis gambar atau menghasilkan prompt. Periksa gambar atau coba lagi.');
+                    console.error("Unexpected API response structure for analysis:", result);
+                }
+            } catch (err) {
+                // Catch and display any errors that occur during the fetch operation
+                displayError('Terjadi kesalahan saat menganalisis gambar: ' + err.Message);
+                console.error("Error during image analysis:", err);
+            } finally {
+                // Always hide loading state and re-enable the button, regardless of success or failure
+                generatePromptText.classList.remove('hidden');
+                generatePromptSpinner.classList.add('hidden');
+                generatePromptButton.disabled = false;
+            }
+        };
+
+        // Event listener for the "Copy Prompt" button click
+        copyPromptButton.onclick = () => {
+            if (currentPrompt.trim()) { // Check if there's any prompt content to copy
+                // Create a temporary textarea element to facilitate copying
+                const textarea = document.createElement('textarea');
+                textarea.value = currentPrompt; // Set its value to the prompt text
+                document.Body.appendChild(textarea); // Temporarily append it to the document body
+                textarea.Select(); // Select all text within the textarea
+                try {
+                    document.execCommand('Copy'); // Execute the copy command (browser compatibility)
+                    showAlert('Prompt berhasil disalin ke clipboard!'); // Show success alert
+                } catch (err) {
+                    // Fallback for browsers where execCommand might not work
+                    showAlert('Gagal menyalin prompt. Silakan salin secara manual.');
+                    console.error('Failed to copy prompt:', err);
+                }
+                document.Body.removeChild(textarea); // Remove the temporary textarea
+            } else {
+                showAlert('Tidak ada prompt untuk disalin.'); // Alert if no prompt exists
+            }
+        };
+
+        // Add a listener for when the window is closed or refreshed
+        window.addEventListener('beforeunload', async () => {
+            if (userId && db) {
+                try {
+                    const userRef = Doc(db, `artifacts/${appId}/public/data/onlineUsers`, userId);
+                    // Mark user as offline
+                    // Note: onDisconnect is more robust for real-time presence, but
+                    // for simple Firestore, 'beforeunload' is a client-side attempt.
+                    await setDoc(userRef, { lastSeen: Date.now(), online: false }, { Merge: true });
+                    console.log(`User ${userId} marked as offline.`);
+                } catch (error) {
+                    console.error("Error marking user offline on beforeunload:", error);
+                }
+            }
+        });
+    </script>
+</Body>
+</HTML>
