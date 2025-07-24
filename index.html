@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <Style>
         /* Import Inter font for a modern and clean typography */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+        @import url('https://fonts.googleAPIs.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
 
         /* Base body styles for a dark, immersive background and Inter font */
         Body {
@@ -20,7 +20,7 @@
             align-items: center; /* Center content vertically */
             min-height: 100vh; /* Ensure body takes full viewport height */
             background-color: #12121e; /* Very dark, almost black background */
-            color: #e0e0e0; /* Default light text color for contrast */
+            Color: #e0e0e0; /* Default light text color for contrast */
             transition: background-color 0.5s ease; /* Smooth background transition */
         }
 
@@ -307,9 +307,9 @@
                 const payload = {
                     contents: [
                         {
-                            role: "user", // The role of the sender (user)
+                            role: "User", // The role of the sender (user)
                             parts: [
-                                { text: analysisPrompt }, // The text part of the prompt
+                                { Text: analysisPrompt }, // The text part of the prompt
                                 {
                                     inlineData: { // The image data part
                                         mimeType: uploadedImageMimeType, // Dynamically set MIME type
@@ -321,12 +321,12 @@
                     ],
                 };
                 // API key provided by the user. Canvas runtime will provide it if left empty.
-                const apiKey = "AIzaSyDOhsUEyVD2h6MSOSIzpevKAHcTw9KqHi0"; 
+                const APIkey = "AIzaSyDOhsUEyVD2h6MSOSIzpevKAHcTw9KqHi0"; // Changed to empty string for automatic handling by Canvas
                 // Gemini API endpoint for generating content from Gemini 2.0 Flash model
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const APIurl = `https://generativelanguage.googleAPIs.com/v1beta/models/gemini-2.0-flash:generateContent?key=${APIkey}`;
 
                 // Make the asynchronous fetch call to the Gemini API
-                const response = await fetch(apiUrl, {
+                const response = await fetch(APIurl, {
                     method: 'POST', // HTTP method for sending data
                     headers: { 'Content-Type': 'application/json' }, // Specify content type as JSON
                     body: JSON.stringify(payload) // Convert JavaScript object to JSON string for the request body
@@ -336,7 +336,7 @@
 
                 // Check if the API response contains valid content
                 if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].Content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const text = result.candidates[0].content.parts[0].text; // Extract the generated text
                     currentPrompt = "Buatkan gambar, " + text; // Add the specified prefix to the prompt
